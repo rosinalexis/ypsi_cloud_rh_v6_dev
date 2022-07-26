@@ -43,14 +43,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $confirmed = false;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Profile $profile = null;
-
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Job $job = null;
-
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Company $company = null;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Profile $profile = null;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Job $job = null;
 
     public function getId(): ?int
     {
@@ -146,6 +146,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
     public function getProfile(): ?Profile
     {
         return $this->profile;
@@ -153,6 +165,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setProfile(?Profile $profile): self
     {
+        // unset the owning side of the relation if necessary
+        if ($profile === null && $this->profile !== null) {
+            $this->profile->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($profile !== null && $profile->getUser() !== $this) {
+            $profile->setUser($this);
+        }
+
         $this->profile = $profile;
 
         return $this;
@@ -163,21 +185,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->job;
     }
 
-    public function setJob(?Job $job): self
+    public function setJob(Job $job): self
     {
+        // set the owning side of the relation if necessary
+        if ($job->getUser() !== $this) {
+            $job->setUser($this);
+        }
+
         $this->job = $job;
-
-        return $this;
-    }
-
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
-
-    public function setCompany(?Company $company): self
-    {
-        $this->company = $company;
 
         return $this;
     }

@@ -26,12 +26,14 @@ class Job
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\OneToOne(mappedBy: 'job', cascade: ['persist', 'remove'])]
-    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'jobs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+
+    #[ORM\OneToOne(inversedBy: 'job', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -62,27 +64,6 @@ class Job
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($user === null && $this->user !== null) {
-            $this->user->setJob(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($user !== null && $user->getJob() !== $this) {
-            $user->setJob($this);
-        }
-
-        $this->user = $user;
-
-        return $this;
-    }
 
     public function getCategory(): ?Category
     {
@@ -92,6 +73,18 @@ class Job
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
