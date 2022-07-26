@@ -3,13 +3,17 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Traits\Timestamplable;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Company
 {
+    use Timestamplable;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column()]

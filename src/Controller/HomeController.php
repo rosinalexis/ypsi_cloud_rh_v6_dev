@@ -14,10 +14,12 @@ class HomeController extends AbstractController
     {
         return new JsonResponse(
             [
-                'action' => 'index',
-                'time' => time()
+                "title" => "YPSI CLOUD RH V6",
+                "version" => "0.6",
+                "time" => new \DateTimeImmutable(),
+                "message" => "Welcome To the backend of Ypsi Cloud RH "
             ],
-
+            Response::HTTP_OK
         );
     }
 }
