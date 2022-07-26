@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Enums\Gender;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\ProfileRepository;
 use Doctrine\DBAL\Types\Types;
@@ -26,7 +27,7 @@ class Profile
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 10)]
+    #[ORM\Column(length: 10, enumType: Gender::class)]
     private ?string $gender = null;
 
     #[ORM\Column(length: 255)]
@@ -34,6 +35,9 @@ class Profile
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthdate = null;
+
+    #[ORM\Column(length: 30)]
+    private ?string $phone = null;
 
     public function getId(): ?int
     {
@@ -96,6 +100,18 @@ class Profile
     public function setBirthdate(\DateTimeInterface $birthdate): self
     {
         $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

@@ -15,6 +15,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const ROLE_USER = ["ROLE_USER"];
+    const ROLE_ADMIN = ["ROLE_ADMIN"];
+
     use Timestamplable;
 
     #[ORM\Id]
