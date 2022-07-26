@@ -38,6 +38,10 @@ class Contact
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
+    #[ORM\ManyToOne(inversedBy: 'contacts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?JobAd $jobAd = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,6 +115,18 @@ class Contact
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getJobAd(): ?JobAd
+    {
+        return $this->jobAd;
+    }
+
+    public function setJobAd(?JobAd $jobAd): self
+    {
+        $this->jobAd = $jobAd;
 
         return $this;
     }
