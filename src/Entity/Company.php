@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'companies')]
 #[ApiResource]
 class Company
 {

@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'contacts')]
 #[ApiResource]
 class Contact
 {

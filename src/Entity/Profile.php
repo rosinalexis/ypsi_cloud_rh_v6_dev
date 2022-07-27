@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Entity\Enums\Gender;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\ProfileRepository;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'profiles')]
 #[ApiResource]
 class Profile
 {

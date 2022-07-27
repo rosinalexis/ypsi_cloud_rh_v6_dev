@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'jobs')]
 #[ApiResource]
 class Job
 {

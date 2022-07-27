@@ -14,9 +14,9 @@ trait Timestamplable
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    public function getCreatedAt()
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createdAt = null;
+        return $this->createdAt;
     }
 
     public function setCreatedAt($createdAt): void
@@ -24,7 +24,7 @@ trait Timestamplable
         $this->createdAt = $createdAt;
     }
 
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
