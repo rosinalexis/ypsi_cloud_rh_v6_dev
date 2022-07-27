@@ -56,6 +56,9 @@ class JobAd
     #[ORM\OneToMany(mappedBy: 'jobAd', targetEntity: Contact::class, orphanRemoval: true)]
     private Collection $contacts;
 
+    #[ORM\Column]
+    private ?int $companyId = null;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
@@ -212,6 +215,18 @@ class JobAd
                 $contact->setJobAd(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->companyId;
+    }
+
+    public function setCompanyId(int $companyId): self
+    {
+        $this->companyId = $companyId;
 
         return $this;
     }

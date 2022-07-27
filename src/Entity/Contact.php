@@ -42,6 +42,9 @@ class Contact
     #[ORM\JoinColumn(nullable: false)]
     private ?JobAd $jobAd = null;
 
+    #[ORM\Column]
+    private ?int $companyId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,6 +130,18 @@ class Contact
     public function setJobAd(?JobAd $jobAd): self
     {
         $this->jobAd = $jobAd;
+
+        return $this;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->companyId;
+    }
+
+    public function setCompanyId(int $companyId): self
+    {
+        $this->companyId = $companyId;
 
         return $this;
     }
