@@ -40,7 +40,7 @@ class JobAd
     #[ORM\Column(nullable: true)]
     private array $tasks = [];
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $wage = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -58,6 +58,9 @@ class JobAd
 
     #[ORM\Column]
     private ?int $companyId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $publishedAt = null;
 
     public function __construct()
     {
@@ -227,6 +230,18 @@ class JobAd
     public function setCompanyId(int $companyId): self
     {
         $this->companyId = $companyId;
+
+        return $this;
+    }
+
+    public function getPublishedAt(): ?\DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(\DateTimeImmutable $publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }

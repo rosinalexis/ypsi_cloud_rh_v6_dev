@@ -13,8 +13,10 @@ class UserFixtures extends Fixture
 {
     private UserPasswordHasherInterface $passwordHasher;
     private Generator $faker;
-    const NUMBER_OF_FAKE_ELEMENT = 5;
+    const NUMBER_OF_FAKE_ELEMENT = 15;
     public const USER_REFERENCE ='user_';
+    public const USER_ADMIN_REFERENCE ='user_admin';
+    public const USER_TEST_REFERENCE ='user_test';
 
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
@@ -31,11 +33,11 @@ class UserFixtures extends Fixture
 
     public function loadSimpleUsers(ObjectManager $manager)
     {
-        for ($i = 0; $i < self::NUMBER_OF_FAKE_ELEMENT; $i++) {
+        for ($i = 1; $i < self::NUMBER_OF_FAKE_ELEMENT; $i++) {
             $user = new User();
             $user
                 ->setEmail($this->faker->email())
-                ->setRoles(USER::ROLE_USER)
+                ->setRoles($this->faker->randomElement([User::ROLE_ADMIN,User::ROLE_USER]))
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
                 ->setBlocked($this->faker->randomElement([true, false]))
                 ->setConfirmed(true);
@@ -60,6 +62,8 @@ class UserFixtures extends Fixture
 
         $manager->persist($user);
         $manager->flush();
+
+        $this->addReference(self::USER_ADMIN_REFERENCE,$user);
     }
 
     public function loadTestUser(ObjectManager $manager)
@@ -74,5 +78,7 @@ class UserFixtures extends Fixture
 
         $manager->persist($user);
         $manager->flush();
+
+        $this->addReference(self::USER_TEST_REFERENCE,$user);
     }
 }

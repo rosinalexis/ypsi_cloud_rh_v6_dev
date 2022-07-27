@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Company;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -20,7 +21,11 @@ class AppFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             UserFixtures::class,
-            ProfileFixtures::class
+            CompanyFixtures::class,
+            CategoryFixtures::class,
+            JobFixtures::class,
+            ProfileFixtures::class,
+            JobAdFixtures::class
         ];
     }
 }

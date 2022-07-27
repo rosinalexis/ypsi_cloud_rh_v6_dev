@@ -15,7 +15,7 @@ use Faker\Generator;
 class ProfileFixtures extends Fixture
 {
     private Generator $faker;
-    const NUMBER_OF_FAKE_ELEMENT = 5;
+    const NUMBER_OF_FAKE_ELEMENT = 15;
 
     public function __construct()
     {
@@ -27,7 +27,7 @@ class ProfileFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        for ($i=0; $i <self::NUMBER_OF_FAKE_ELEMENT; $i++){
+        for ($i=1; $i <self::NUMBER_OF_FAKE_ELEMENT; $i++){
             $profile = new Profile();
             $profile->setFirstname($this->faker->firstName())
                 ->setLastname($this->faker->lastName())

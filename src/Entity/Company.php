@@ -27,6 +27,9 @@ class Company
     #[ORM\Column(length: 255)]
     private ?string $Name = null;
 
+    #[ORM\Column(length: 180)]
+    private ?string $email = null;
+
     #[ORM\Column(length: 30)]
     private ?string $Phone = null;
 
@@ -44,6 +47,11 @@ class Company
 
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: User::class)]
     private Collection $users;
+
+    #[ORM\Column(length: 255)]
+    private ?string $address = null;
+
+
 
     public function __construct()
     {
@@ -165,6 +173,30 @@ class Company
                 $user->setCompany(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }
