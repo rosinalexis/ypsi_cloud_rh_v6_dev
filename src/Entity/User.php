@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -18,13 +20,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post',
+        'post'=>["security" => "is_granted('ROLE_ADMIN')"],
     ],
     itemOperations: [
         'get',
-        'put',
-        'delete'
+        'put'=>["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        'delete' =>["security" => "is_granted('ROLE_ADMIN')"]
     ],
+    attributes: [
+        'normalization_context' => ['groups' => ['user:read']],
+        'denormalization_context' => ['groups' => ['user:write']],
+        //'security' => "is_granted('ROLE_USER')"
+    ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -35,18 +42,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column()]
+    #[ORM\Column]
+    #[Groups('user:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Assert\Length(min: 6, max: 180)]
+    #[Groups('user:read')]
     private ?string $email = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Choice([self::ROLE_USER, self::ROLE_ADMIN])]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
+    #[Groups('user:read')]
     private array $roles = [];
 
     /**
@@ -67,19 +78,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[Assert\Type('bool')]
+    #[Groups('user:read')]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $blocked = false;
 
     #[ORM\Column]
     #[Assert\Type('bool')]
+    #[Groups('user:read')]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $confirmed = false;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups('user:read')]
     private ?Company $company = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[Groups('user:read')]
     private ?Profile $profile = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[Groups('user:read')]
     private ?Job $job = null;
 
     public function getId(): ?int
