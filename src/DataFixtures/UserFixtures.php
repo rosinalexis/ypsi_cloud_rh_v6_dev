@@ -38,7 +38,7 @@ class UserFixtures extends Fixture
             $user
                 ->setEmail($this->faker->email())
                 ->setRoles($this->faker->randomElement([User::ROLE_ADMIN,User::ROLE_USER]))
-                ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+                ->setPassword($this->passwordHasher->hashPassword($user, 'e34g#52kNRtL'))
                 ->setBlocked($this->faker->randomElement([true, false]))
                 ->setConfirmed(true);
 
@@ -56,7 +56,7 @@ class UserFixtures extends Fixture
         $user
             ->setEmail('admin@admin.fr')
             ->setRoles(USER::ROLE_ADMIN)
-            ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+            ->setPassword($this->passwordHasher->hashPassword($user, 'e34g#52kNRtL'))
             ->setBlocked(false)
             ->setConfirmed(true);
 
@@ -72,7 +72,7 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setEmail('testman@test.fr')
             ->setRoles(USER::ROLE_ADMIN)
-            ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+            ->setPassword($this->passwordHasher->hashPassword($user, 'e34g#52kNRtL'))
             ->setBlocked(false)
             ->setConfirmed(true);
 

@@ -3,18 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'categories')]
-#[ApiResource]
+#[ApiResource(
+
+)]
 class Category
 {
     use Timestamplable;
@@ -31,9 +35,11 @@ class Category
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Job::class)]
+    #[ApiSubresource]
     private Collection $jobs;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: JobAd::class)]
+    #[ApiSubresource]
     private Collection $jobAds;
 
     #[ORM\Column]

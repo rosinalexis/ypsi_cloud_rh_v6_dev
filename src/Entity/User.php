@@ -6,13 +6,26 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[UniqueEntity('email')]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post',
+    ],
+    itemOperations: [
+        'get',
+        'put',
+        'delete'
+    ],
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_USER = ["ROLE_USER"];
@@ -26,21 +39,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[Assert\Length(min: 6, max: 180)]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Choice([self::ROLE_USER, self::ROLE_ADMIN])]
     private array $roles = [];
 
     /**
      * @var string|null The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Regex(
+        pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/"
+    )]
     private ?string $password = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Expression(
+        "this.getPassword() === this.getRetypedPassword()",message: "Password does not match."
+    )]
+    private ?string $retypedPassword = null;
+
     #[ORM\Column]
+    #[Assert\Type('bool')]
     private ?bool $blocked = false;
 
     #[ORM\Column]
+    #[Assert\Type('bool')]
     private ?bool $confirmed = false;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -195,5 +225,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->job = $job;
 
         return $this;
+    }
+
+
+    public function getRetypedPassword(): ?string
+    {
+        return $this->retypedPassword;
+    }
+
+    public function setRetypedPassword(?string $retypedPassword): void
+    {
+        $this->retypedPassword = $retypedPassword;
     }
 }

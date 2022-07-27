@@ -11,7 +11,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'contacts')]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post',
+    ],
+    itemOperations: [
+        'get',
+        'put',
+        'delete'
+    ],
+)]
 class Contact
 {
     use Timestamplable;

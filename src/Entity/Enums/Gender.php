@@ -2,7 +2,8 @@
 
 namespace App\Entity\Enums;
 
-enum Gender:string{
+enum Gender:string
+{
     case Monsieur  = 'M';
     case Madame ='Mme';
     case Mademoiselle ='Mlle';

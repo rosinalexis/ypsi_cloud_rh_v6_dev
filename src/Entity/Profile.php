@@ -11,7 +11,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'profiles')]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post',
+    ],
+    itemOperations: [
+        'get',
+        'put',
+        'delete'
+    ],
+)]
 class Profile
 {
     use Timestamplable;

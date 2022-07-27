@@ -41,7 +41,7 @@ class JobAdFixtures extends Fixture
             /**
              * @var $category Category
              */
-            $category = $this->getReference(CategoryFixtures::CATEGORY_REFERENCE . $i);
+            $category = $this->getReference(CategoryFixtures::CATEGORY_REFERENCE . $this->faker->numberBetween(1,14));
 
             $jobAd->setCategory($category);
             $jobAd->setCompanyId($category->getCompanyId());

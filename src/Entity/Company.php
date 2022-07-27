@@ -12,7 +12,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'companies')]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post',
+    ],
+    itemOperations: [
+        'get',
+        'put',
+        'delete'
+    ],
+)]
 class Company
 {
     use Timestamplable;
