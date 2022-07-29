@@ -7,6 +7,7 @@ use App\Entity\Traits\Timestamplable;
 use App\Repository\ContactRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -14,13 +15,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post',
+        'post' =>[
+            'security' => "is_granted('PUBLIC_ACCESS')"
+        ],
     ],
-    itemOperations: [
-        'get',
-        'put',
-        'delete'
-    ],
+    attributes: [
+        'security' => "is_granted('ROLE_ADMIN')"
+    ]
 )]
 class Contact
 {
@@ -32,28 +33,39 @@ class Contact
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2,max: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2,max: 255)]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[Assert\Length(min: 5,max: 255)]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $message = null;
 
     #[ORM\Column(nullable: true)]
     private array $management = [];
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'contacts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?JobAd $jobAd = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $companyId = null;
 
     public function getId(): ?int

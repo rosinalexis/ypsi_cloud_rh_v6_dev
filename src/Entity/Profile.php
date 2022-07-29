@@ -7,20 +7,15 @@ use App\Entity\Traits\Timestamplable;
 use App\Repository\ProfileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'profiles')]
 #[ApiResource(
-    collectionOperations: [
-        'get',
-        'post',
-    ],
-    itemOperations: [
-        'get',
-        'put',
-        'delete'
-    ],
+    attributes: [
+        'security' => "is_granted('ROLE_ADMIN')"
+    ]
 )]
 class Profile
 {
@@ -32,25 +27,36 @@ class Profile
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2,max: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2,max: 255)]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\NotBlank]
     private ?string $gender = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5,max: 255)]
     private ?string $address = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
+    #[Assert\Date]
     private ?\DateTimeInterface $birthdate = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\Length(min: 10,max: 30)]
     private ?string $phone = null;
 
     #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?User $user = null;
 
     public function getId(): ?int

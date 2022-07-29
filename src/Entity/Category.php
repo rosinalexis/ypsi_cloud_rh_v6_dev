@@ -3,21 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'categories')]
 #[ApiResource(
-
+    attributes: [
+        'security' => "is_granted('ROLE_ADMIN')"
+    ]
 )]
 class Category
 {
@@ -29,20 +30,22 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 255)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT,nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Job::class)]
-    #[ApiSubresource]
     private Collection $jobs;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: JobAd::class)]
-    #[ApiSubresource]
     private Collection $jobAds;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $companyId = null;
 
     public function __construct()

@@ -8,20 +8,15 @@ use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'companies')]
 #[ApiResource(
-    collectionOperations: [
-        'get',
-        'post',
-    ],
-    itemOperations: [
-        'get',
-        'put',
-        'delete'
-    ],
+    attributes: [
+        'security' => "is_granted('ROLE_ADMIN')"
+    ]
 )]
 class Company
 {
@@ -33,35 +28,50 @@ class Company
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 10,max: 255)]
     private ?string $siret = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 5,max: 10)]
     private ?string $Name = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[Assert\Length(min:5,max: 180)]
     private ?string $email = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 10,max: 30)]
     private ?string $Phone = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5,max: 255)]
     private ?string $departmentName = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $departmentNumber = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5,max: 255)]
     private ?string $region = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5,max: 255)]
+    private ?string $address = null;
 
     #[ORM\Column(nullable: true)]
     private array $settings = [];
 
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: User::class)]
     private Collection $users;
-
-    #[ORM\Column(length: 255)]
-    private ?string $address = null;
-
 
 
     public function __construct()

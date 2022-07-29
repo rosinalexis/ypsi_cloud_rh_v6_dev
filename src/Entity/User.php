@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,8 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     attributes: [
         'normalization_context' => ['groups' => ['user:read']],
-        'denormalization_context' => ['groups' => ['user:write']],
-        //'security' => "is_granted('ROLE_USER')"
+        'security' => "is_granted('ROLE_USER')"
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -94,10 +94,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     #[Groups('user:read')]
+    #[ApiSubresource]
     private ?Profile $profile = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     #[Groups('user:read')]
+    #[ApiSubresource]
     private ?Job $job = null;
 
     public function getId(): ?int

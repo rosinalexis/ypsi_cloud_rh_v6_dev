@@ -9,10 +9,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait Timestamplable
 {
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[Groups('user:read')]
     private ?\DateTimeImmutable $createdAt = null ;
 
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[Groups('user:read')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function getCreatedAt(): ?\DateTimeImmutable
