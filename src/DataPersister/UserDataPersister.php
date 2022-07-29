@@ -28,11 +28,10 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        dd($data);
 
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
-            $this->hashUserPassword($data);
+            $this->initUserAccount($data);
         }
 
         //enregistrement des données
@@ -46,6 +45,13 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $this->_em->flush();
     }
 
+    private function initUserAccount(User $user)
+    {
+        $user->setBlocked(false);
+        $user->setConfirmed(false);
+        $this->hashUserPassword($user);
+    }
+
     private function hashUserPassword(User $user)
     {
         // hash du mot de passe de l'utilisateur
@@ -55,6 +61,5 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
                 $user->getPassword()
             )
         );
-
     }
 }

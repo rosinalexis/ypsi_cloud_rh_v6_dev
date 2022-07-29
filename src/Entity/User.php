@@ -21,9 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post'=>[
-            'security' => "is_granted('PUBLIC_ACCESS')"
-        ],
+        'post'
     ],
     itemOperations: [
         'get',
@@ -57,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
+    #[Assert\Choice(choices: [self::ROLE_ADMIN,self::ROLE_USER])]
     #[Groups('user:read')]
     private array $roles = [];
 
