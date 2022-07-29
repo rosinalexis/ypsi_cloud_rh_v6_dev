@@ -7,6 +7,7 @@ use App\Entity\Traits\Timestamplable;
 use App\Repository\ProfileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
@@ -16,15 +17,19 @@ use Symfony\Component\Validator\Constraints as Assert;
     collectionOperations: [
         'post' => [
             'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
+            'denormalization_context' => ['groups' => ['profile:post:write']]
         ]
     ],
     itemOperations: [
-        'get',
+        'get' =>[
+            'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()"
+        ],
         'put' => [
             'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
+            'denormalization_context' => ['groups' => ['profile:put:write']]
         ],
         'patch' => [
-            'security' => "is_granted('ROLE_ADMIN') or object.owner == user or object.getId() == user.getProfile().getId()",
+            'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
         ],
         'delete'
     ],
@@ -39,39 +44,46 @@ class Profile
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column()]
+    #[Groups('user:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
+    #[Groups(['user:read','profile:post:write'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
+    #[Groups(['user:read','profile:post:write'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\NotBlank]
+    #[Groups(['user:read','profile:post:write'])]
     private ?string $gender = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5, max: 255)]
+    #[Groups(['user:read','profile:post:write','profile:put:write'])]
     private ?string $address = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
-    #[Assert\Date]
+    #[Groups(['user:read','profile:post:write'])]
     private ?\DateTimeInterface $birthdate = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\Length(min: 10, max: 30)]
+    #[Groups(['user:read','profile:post:write','profile:put:write'])]
     private ?string $phone = null;
 
-    #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups(['profile:post:write'])]
     private ?User $user = null;
 
     public function getId(): ?int

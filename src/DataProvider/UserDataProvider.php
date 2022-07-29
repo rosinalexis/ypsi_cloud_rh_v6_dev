@@ -39,7 +39,6 @@ class UserDataProvider implements ContextAwareCollectionDataProviderInterface,Re
     }
 
 
-
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): object|null
     {
         /**

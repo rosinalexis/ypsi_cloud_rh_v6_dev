@@ -7,6 +7,7 @@ use App\Entity\Traits\Timestamplable;
 use App\Repository\JobRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
@@ -32,15 +33,18 @@ class Job
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('user:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('user:read')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(max: 255)]
+    #[Groups('user:read')]
     private ?string $description = null;
 
 
@@ -49,7 +53,7 @@ class Job
     #[Assert\NotBlank]
     private ?Category $category = null;
 
-    #[ORM\OneToOne(inversedBy: 'job', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'job', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
     private ?User $user = null;
