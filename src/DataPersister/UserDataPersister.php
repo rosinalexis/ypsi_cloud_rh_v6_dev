@@ -28,6 +28,8 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+        dd($data);
+
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
             $this->hashUserPassword($data);

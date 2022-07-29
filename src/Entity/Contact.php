@@ -66,6 +66,7 @@ class Contact
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\type('int')]
     private ?int $companyId = null;
 
     public function getId(): ?int

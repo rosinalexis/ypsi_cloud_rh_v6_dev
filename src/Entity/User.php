@@ -21,7 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post',
+        'post'=>[
+            'security' => "is_granted('PUBLIC_ACCESS')"
+        ],
     ],
     itemOperations: [
         'get',
@@ -54,8 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Choice([self::ROLE_USER, self::ROLE_ADMIN])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     #[Groups('user:read')]
     private array $roles = [];
@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Regex(
-        pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/"
+        pattern: '/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/'
     )]
     private ?string $password = null;
 
@@ -135,8 +135,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }

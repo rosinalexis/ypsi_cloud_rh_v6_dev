@@ -35,7 +35,7 @@ class Company
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 5,max: 10)]
-    private ?string $Name = null;
+    private ?string $name = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank]
@@ -46,7 +46,7 @@ class Company
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 10,max: 30)]
-    private ?string $Phone = null;
+    private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
@@ -98,24 +98,24 @@ class Company
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
 
     public function getPhone(): ?string
     {
-        return $this->Phone;
+        return $this->phone;
     }
 
-    public function setPhone(string $Phone): self
+    public function setPhone(string $phone): self
     {
-        $this->Phone = $Phone;
+        $this->phone = $phone;
 
         return $this;
     }
