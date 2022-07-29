@@ -56,6 +56,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->add($user, true);
     }
 
+    public function findAllUserInCompany($value): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.company = :val')
+            ->setParameter('val', $value)
+            ->orderBy('u.id', 'ASC')
+            ->setMaxResults(30)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

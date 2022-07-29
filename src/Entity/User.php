@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Action\User\ListUserAction;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;

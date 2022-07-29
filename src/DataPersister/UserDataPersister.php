@@ -53,11 +53,11 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         $user->setBlocked(false);
         $user->setConfirmed(false);
-        $this->setUserCompany($user);
+        $this->setDefaultUserCompany($user);
         $this->hashUserPassword($user);
     }
 
-    private function setUserCompany(User $user)
+    private function setDefaultUserCompany(User $user)
     {
         /**
          * @var $adminUser User
