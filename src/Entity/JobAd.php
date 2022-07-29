@@ -14,7 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'job_ads')]
 #[ApiResource(
-
+    collectionOperations: [
+        'get' => [
+            'security' => "is_granted('PUBLIC_ACCESS')"
+        ],
+        'post'
+    ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
     ]

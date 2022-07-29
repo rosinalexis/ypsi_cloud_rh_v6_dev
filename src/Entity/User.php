@@ -21,16 +21,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post'=>["security" => "is_granted('ROLE_ADMIN')"],
+        'post',
     ],
     itemOperations: [
         'get',
-        'put'=>["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        'delete' =>["security" => "is_granted('ROLE_ADMIN')"]
+        'put',
+        'delete'
     ],
     attributes: [
         'normalization_context' => ['groups' => ['user:read']],
-        'security' => "is_granted('ROLE_USER')"
+        'security' => "is_granted('ROLE_ADMIN')"
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface

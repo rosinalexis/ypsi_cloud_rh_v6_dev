@@ -13,6 +13,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'profiles')]
 #[ApiResource(
+    collectionOperations: [
+        'post' => [
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
+        ]
+    ],
+    itemOperations: [
+        'get',
+        'put' => [
+            'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
+        ],
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN') or object.owner == user or object.getId() == user.getProfile().getId()",
+        ],
+        'delete'
+    ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
     ]
@@ -28,12 +43,12 @@ class Profile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2,max: 255)]
+    #[Assert\Length(min: 2, max: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2,max: 255)]
+    #[Assert\Length(min: 2, max: 255)]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 10)]
@@ -42,7 +57,7 @@ class Profile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 5,max: 255)]
+    #[Assert\Length(min: 5, max: 255)]
     private ?string $address = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -51,7 +66,7 @@ class Profile
     private ?\DateTimeInterface $birthdate = null;
 
     #[ORM\Column(length: 30)]
-    #[Assert\Length(min: 10,max: 30)]
+    #[Assert\Length(min: 10, max: 30)]
     private ?string $phone = null;
 
     #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]

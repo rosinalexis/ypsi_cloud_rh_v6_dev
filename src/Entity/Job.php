@@ -15,11 +15,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     itemOperations:[
         'get'=>[
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
+            'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getJob().getId()"
         ],
         'put',
         'patch',
-
+        'delete',
     ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
