@@ -6,17 +6,21 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Security;
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
     private EntityManagerInterface $_em;
     private UserPasswordHasherInterface $_passwordHaser;
+    private  Security $security;
 
     public function __construct(
+        Security $security,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
     )
     {
+        $this->security =$security;
         $this->_em = $em;
         $this->_passwordHaser =$passwordHasher;
     }
@@ -49,7 +53,17 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         $user->setBlocked(false);
         $user->setConfirmed(false);
+        $this->setUserCompany($user);
         $this->hashUserPassword($user);
+    }
+
+    private function setUserCompany(User $user)
+    {
+        /**
+         * @var $adminUser User
+         */
+        $adminUser = $this->security->getUser();
+        $user->setCompany($adminUser->getCompany());
     }
 
     private function hashUserPassword(User $user)
@@ -58,7 +72,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $user->setPassword(
             $this->_passwordHaser->hashPassword(
                 $user,
-                $user->getPassword()
+                "e34g#52kNRtL"
             )
         );
     }

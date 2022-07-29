@@ -21,11 +21,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post'
+        'post' =>[
+            'denormalization_context' => ['groups' => ['user:post:write']]
+        ]
     ],
     itemOperations: [
         'get',
-        'put',
+        'put' =>[
+            'denormalization_context' => ['groups' => ['user:put:write']]
+        ],
+        'patch',
         'delete'
     ],
     attributes: [
@@ -47,43 +52,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['user:post:write'])]
     #[Assert\Email]
     #[Assert\Length(min: 6, max: 180)]
-    #[Groups('user:read')]
+    #[Groups(['user:read','user:post:write'])]
     private ?string $email = null;
 
     #[ORM\Column]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     #[Assert\Choice(choices: [self::ROLE_ADMIN,self::ROLE_USER])]
-    #[Groups('user:read')]
+    #[Groups(['user:read','user:post:write','user:put:write'])]
     private array $roles = [];
 
     /**
      * @var string|null The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['user:post:write'])]
     #[Assert\Regex(
-        pattern: '/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/'
+        pattern: '/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/',groups: ['user:post:write']
     )]
+    #[Groups(['user:post:write'])]
     private ?string $password = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['user:post:write'])]
     #[Assert\Expression(
-        "this.getPassword() === this.getRetypedPassword()",message: "Password does not match."
+        "this.getPassword() === this.getRetypedPassword()",message: "Password does not match.",groups: ['user:post:write']
     )]
+    #[Groups(['user:post:write'])]
     private ?string $retypedPassword = null;
 
     #[ORM\Column]
     #[Assert\Type('bool')]
-    #[Groups('user:read')]
+    #[Groups(['user:read','user:put:write'])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $blocked = false;
 
     #[ORM\Column]
     #[Assert\Type('bool')]
-    #[Groups('user:read')]
+    #[Groups(['user:read','user:put:write'])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $confirmed = false;
 

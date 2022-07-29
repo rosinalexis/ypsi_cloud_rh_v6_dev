@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -32,7 +34,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/app/config', name: 'app_config', methods: ['POST'])]
-    public function addFirstAdminAndCompany(Request $request, SerializerInterface $serializer,EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
+    public function addFirstAdminAndCompany(Request $request, SerializerInterface $serializer,EntityManagerInterface $em, ValidatorInterface $validator,UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $userInfo = json_encode($request->toArray()['user']);
         $companyInfo = json_encode($request->toArray()['company']);
@@ -41,6 +43,7 @@ class HomeController extends AbstractController
          * @var $user User
          */
         $user = $serializer->deserialize($userInfo, User::class, 'json');
+
         $user->setBlocked(false);
         $user->setConfirmed(true);
         $user->setRoles(User::ROLE_ADMIN);
@@ -62,6 +65,8 @@ class HomeController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
         }
+
+        $user->setPassword($passwordHasher->hashPassword($user,$user->getPassword()));
 
         $em->persist($user);
         $em->flush();
