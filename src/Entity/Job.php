@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'jobs')]
 #[ApiResource(
+    collectionOperations:[
+        'post'
+    ],
     itemOperations:[
         'get'=>[
             'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getJob().getId()"

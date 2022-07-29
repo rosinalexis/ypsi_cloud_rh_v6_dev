@@ -41,7 +41,7 @@ class CategoryDataProvider implements ContextAwareCollectionDataProviderInterfac
         return $this->categoryRepository->findByCompany($companyId);
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): Category|null
     {
         /**
          * @var $user User

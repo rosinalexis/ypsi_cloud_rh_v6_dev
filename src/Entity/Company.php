@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'companies')]
 #[ApiResource(
+    collectionOperations:[],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
     ]
@@ -77,6 +78,12 @@ class Company
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->setSettings([
+                "email_template_list" => [],
+                "equipment_config_list" => [],
+                "document_config_list" => [],
+                "business_support_list" => [],
+            ]);
     }
 
     public function getId(): ?int
