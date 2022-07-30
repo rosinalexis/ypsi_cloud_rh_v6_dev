@@ -39,6 +39,20 @@ class ContactRepository extends ServiceEntityRepository
         }
     }
 
+        /**
+     * @return Contact[] Returns an array of Contact objects
+     */
+    public function findByCompany($value): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.companyId = :val')
+            ->setParameter('val', $value)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Contact[] Returns an array of Contact objects
 //     */
