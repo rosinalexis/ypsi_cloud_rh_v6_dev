@@ -41,7 +41,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
             $this->initUserAccount($data);
 
-            //enregistrement des données
+            //enregistrement de la donnée
             $this->_em->persist($data);
         }
 

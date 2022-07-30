@@ -39,7 +39,6 @@ use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
             'path'=>"users/{id}/reset-password",
             'denormalization_context' => ['groups' => ['put:reset:password']]
         ],
-        'patch',
         'delete'
     ],
     attributes: [
@@ -78,19 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank(groups: ['user:post:write'])]
-    #[Assert\Regex(
-        pattern: '/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/',groups: ['user:post:write']
-    )]
-    #[Groups(['user:post:write'])]
     private ?string $password = null;
-
-    #[Assert\NotBlank(groups: ['user:post:write'])]
-    #[Assert\Expression(
-        "this.getPassword() === this.getRetypedPassword()",message: "Password does not match.",groups: ['user:post:write']
-    )]
-    #[Groups(['user:post:write'])]
-    private ?string $retypedPassword = null;
 
     #[Assert\NotBlank(groups: ['put:reset:password'])]
     #[Assert\Regex(
@@ -282,17 +269,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->job = $job;
 
         return $this;
-    }
-
-
-    public function getRetypedPassword(): ?string
-    {
-        return $this->retypedPassword;
-    }
-
-    public function setRetypedPassword(?string $retypedPassword): void
-    {
-        $this->retypedPassword = $retypedPassword;
     }
 
 
