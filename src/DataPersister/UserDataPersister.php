@@ -4,6 +4,7 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\User;
+use App\Service\TokenGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
@@ -13,16 +14,19 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private EntityManagerInterface $_em;
     private UserPasswordHasherInterface $_passwordHaser;
     private  Security $security;
+    private TokenGeneratorService $tokenGeneratorService;
 
     public function __construct(
         Security $security,
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        TokenGeneratorService $tokenGeneratorService
     )
     {
         $this->security =$security;
         $this->_em = $em;
         $this->_passwordHaser =$passwordHasher;
+        $this->tokenGeneratorService = $tokenGeneratorService;
     }
 
     public function supports($data, array $context = []): bool
@@ -55,6 +59,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         $user->setBlocked(false);
         $user->setConfirmed(false);
+        $user->setConfirmationToken($this->tokenGeneratorService->getRandomSecureToken());
         $this->setDefaultUserCompany($user);
         $this->hashUserPassword($user);
     }
@@ -71,6 +76,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private function hashUserPassword(User $user)
     {
         // hash du mot de passe de l'utilisateur
+        // un mot de passe par defaut car c'est l'administrateur qui envo
         $user->setPassword(
             $this->_passwordHaser->hashPassword(
                 $user,
