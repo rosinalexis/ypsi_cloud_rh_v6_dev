@@ -138,6 +138,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups('user:read')]
     private ?Job $job = null;
 
+    #[ORM\Column(type: "string", length: 40,nullable: true)]
+    private ?string $confirmationToken = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -340,6 +343,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
 
+    public function setConfirmationToken(?string $confirmationToken): void
+    {
+        $this->confirmationToken = $confirmationToken;
+    }
 
 }
