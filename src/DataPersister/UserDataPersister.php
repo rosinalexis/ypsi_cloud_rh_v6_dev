@@ -36,10 +36,12 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
             $this->initUserAccount($data);
+
+            //enregistrement des données
+            $this->_em->persist($data);
         }
 
-        //enregistrement des données
-        $this->_em->persist($data);
+
         $this->_em->flush();
     }
 

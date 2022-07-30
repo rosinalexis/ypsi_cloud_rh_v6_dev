@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\Action\User\ResetPasswordAction;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -28,6 +30,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         'get',
         'put' =>[
             'denormalization_context' => ['groups' => ['user:put:write']]
+        ],
+        'put-reset-password' => [
+            'security' => "is_granted('IS_AUTHENTICATED_FULLY')  and  object == user",
+            'security_message' => 'Only Object Owner can reset password.',
+            'method'=>'PUT',
+            'controller'=>ResetPasswordAction::class,
+            'path'=>"users/{id}/reset-password",
+            'denormalization_context' => ['groups' => ['put:reset:password']]
         ],
         'patch',
         'delete'
@@ -52,15 +62,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank(groups: ['user:post:write'])]
-    #[Assert\Email]
-    #[Assert\Length(min: 6, max: 180)]
+    #[Assert\Email(groups: ['user:post:write'])]
+    #[Assert\Length(min: 6, max: 180 ,groups: ['user:post:write'])]
     #[Groups(['user:read','user:post:write'])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?string $email = null;
 
     #[ORM\Column]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
-    #[Assert\Choice(choices: [self::ROLE_ADMIN,self::ROLE_USER])]
+    #[Assert\Choice(choices: [self::ROLE_ADMIN,self::ROLE_USER],groups: ['user:post:write'])]
     #[Groups(['user:read','user:post:write','user:put:write'])]
     private array $roles = [];
 
@@ -82,14 +92,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:post:write'])]
     private ?string $retypedPassword = null;
 
+    #[Assert\NotBlank(groups: ['put:reset:password'])]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/',groups: ['put:reset:password']
+    )]
+    #[Groups(['put:reset:password'])]
+    private ?string $newPassword = null;
+
+    #[Assert\NotBlank(groups: ['put:reset:password'])]
+    #[Assert\Expression(
+        "this.getNewPassword() === this.getNewRetypedPassword()",message: "Password does not match.",groups: ['put:reset:password']
+    )]
+    #[Groups(['put:reset:password'])]
+    private ?string $newRetypedPassword  = null;
+
+    #[SecurityAssert\UserPassword(message: 'Wrong value for your current password',groups: ['put:reset:password'])]
+    #[Assert\NotBlank(groups: ['put:reset:password'])]
+    #[Groups(['put:reset:password'])]
+    private ?string $oldPassword = null;
+
+    #[ORM\Column(type: 'integer',nullable: true)]
+    private ?int $passwordChangeDate = null;
+
     #[ORM\Column]
-    #[Assert\Type('bool')]
+    #[Assert\Type('bool',groups: ['user:post:write'])]
     #[Groups(['user:read','user:put:write'])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $blocked = false;
 
     #[ORM\Column]
-    #[Assert\Type('bool')]
+    #[Assert\Type('bool',groups: ['user:post:write'])]
     #[Groups(['user:read','user:put:write'])]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?bool $confirmed = false;
@@ -259,4 +291,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->retypedPassword = $retypedPassword;
     }
+
+
+    public function getNewPassword(): ?string
+    {
+        return $this->newPassword;
+    }
+
+
+    public function setNewPassword(?string $newPassword): void
+    {
+        $this->newPassword = $newPassword;
+    }
+
+
+    public function getNewRetypedPassword(): ?string
+    {
+        return $this->newRetypedPassword;
+    }
+
+    public function setNewRetypedPassword(?string $newRetypedPassword): void
+    {
+        $this->newRetypedPassword = $newRetypedPassword;
+    }
+
+
+    public function getOldPassword(): ?string
+    {
+        return $this->oldPassword;
+    }
+
+
+    public function setOldPassword(?string $oldPassword): void
+    {
+        $this->oldPassword = $oldPassword;
+    }
+
+
+    public function getPasswordChangeDate(): ?int
+    {
+        return $this->passwordChangeDate;
+    }
+
+
+    public function setPasswordChangeDate(?int $passwordChangeDate): void
+    {
+        $this->passwordChangeDate = $passwordChangeDate;
+    }
+
+
+
+
 }

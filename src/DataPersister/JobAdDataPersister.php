@@ -30,6 +30,7 @@ class JobAdDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof JobAd && (($context['collection_operation_name'] ?? null) === 'post'))
         {
             $this->initNewJobAd($data);
+            $this->em->persist($data);
         }
 
         if ($data instanceof JobAd && (($context['collection_operation_name'] ?? null) === 'put'))
@@ -37,7 +38,7 @@ class JobAdDataPersister implements ContextAwareDataPersisterInterface
             $this->updatePublishedDate($data);
         }
 
-        $this->em->persist($data);
+
         $this->em->flush();
     }
 

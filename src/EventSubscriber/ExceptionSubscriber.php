@@ -14,7 +14,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
 {
     public function onKernelException(ExceptionEvent $event): void
     {
-        //if ($_ENV['APP_ENV'] == 'dev') return;
+        if ($_ENV['APP_ENV'] == 'dev') return;
 
         $exception = $event->getThrowable();
 

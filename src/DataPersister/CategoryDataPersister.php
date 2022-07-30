@@ -31,9 +31,10 @@ final class CategoryDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof Category && (($context['collection_operation_name'] ?? null) === 'post'))
         {
             $this->addCompanyIdToCategory($data);
+            $this->em->persist($data);
         }
 
-        $this->em->persist($data);
+
         $this->em->flush();
     }
 

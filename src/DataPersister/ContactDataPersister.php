@@ -29,9 +29,10 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof Contact && (($context['collection_operation_name'] ?? null) === 'post'))
         {
             $this->initContactItem($data);
+            $this->em->persist($data);
         }
 
-        $this->em->persist($data);
+
         $this->em->flush();
     }
 
