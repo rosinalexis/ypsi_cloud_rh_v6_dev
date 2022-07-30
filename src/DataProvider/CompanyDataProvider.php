@@ -47,7 +47,7 @@ class CompanyDataProvider implements RestrictedDataProviderInterface,ItemDataPro
             return $searchCompany;
         }
 
-        if(!($user->getCompany()->getId() === $searchCompany->getId())){
+        if($user->getCompany()->getId() !== $searchCompany->getId()){
 
             throw new HttpException(Response::HTTP_FORBIDDEN,"This company is not your company.");
         }

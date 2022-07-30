@@ -59,7 +59,7 @@ class CategoryDataProvider implements ContextAwareCollectionDataProviderInterfac
             return $searchCategory;
         }
 
-        if(!($user->getCompany()->getId() === $searchCategory->getCompanyId())){
+        if($user->getCompany()->getId() !== $searchCategory->getCompanyId()){
 
             throw new HttpException(Response::HTTP_FORBIDDEN,"This category is not in your company.");
         }

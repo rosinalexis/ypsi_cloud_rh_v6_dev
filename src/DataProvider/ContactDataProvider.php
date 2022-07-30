@@ -62,7 +62,7 @@ class ContactDataProvider implements ContextAwareCollectionDataProviderInterface
             return $searchContact;
         }
 
-        if(($user->getCompany()->getId() !== $searchContact->getCompanyId()))
+        if($user->getCompany()->getId() !== $searchContact->getCompanyId())
         {
             throw new HttpException(Response::HTTP_FORBIDDEN,"This contact is not in your company.");
         }

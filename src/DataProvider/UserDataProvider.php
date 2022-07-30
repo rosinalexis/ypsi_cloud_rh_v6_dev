@@ -57,7 +57,7 @@ class UserDataProvider implements ContextAwareCollectionDataProviderInterface,Re
             return $searchUser;
         }
 
-        if(!($user->getCompany()->getId() === $searchUser->getCompany()->getId())){
+        if($user->getCompany()->getId() !== $searchUser->getCompany()->getId()){
 
             throw new HttpException(Response::HTTP_FORBIDDEN,"This user is not in your company.");
         }
