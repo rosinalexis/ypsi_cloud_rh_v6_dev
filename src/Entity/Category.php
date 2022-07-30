@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
 
     attributes: [
-        //'denormalization_context' => ['groups' => ['category:post:write']],
         'security' => "is_granted('ROLE_ADMIN')"
     ]
 )]

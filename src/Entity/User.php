@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Action\User\ListUserAction;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -57,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     #[Assert\Length(min: 6, max: 180)]
     #[Groups(['user:read','user:post:write'])]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -101,12 +100,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     #[Groups('user:read')]
-    #[ApiSubresource]
     private ?Profile $profile = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     #[Groups('user:read')]
-    #[ApiSubresource]
     private ?Job $job = null;
 
     public function getId(): ?int
