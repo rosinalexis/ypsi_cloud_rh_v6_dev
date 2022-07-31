@@ -4,6 +4,7 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\User;
+use App\Service\MailerService;
 use App\Service\TokenGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -17,14 +18,14 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private UserPasswordHasherInterface $_passwordHaser;
     private  Security $security;
     private TokenGeneratorService $tokenGeneratorService;
-    private MailerInterface $mailer;
+    private MailerService $mailer;
 
     public function __construct(
         Security $security,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
         TokenGeneratorService $tokenGeneratorService,
-        MailerInterface $mailer,
+        MailerService $mailer,
     )
     {
         $this->security =$security;
@@ -69,7 +70,8 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $this->setDefaultUserCompany($user);
         $this->hashUserPassword($user);
 
-        $this->sendEmail();
+        $this->mailer->sendAccountConfirmationEmail($user);
+
     }
 
     private function setDefaultUserCompany(User $user)
@@ -93,14 +95,4 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         );
     }
 
-    private function sendEmail()
-    {
-        $email = (new Email())
-            ->from('noreply-ypsi-cloud-rh@bob.com')
-            ->to('alexisbotdev@gmail.com')
-            ->subject('Time for Symfony Mailer!')
-            ->html('<p>See Twig integration for better HTML integration!</p>','text\html');
-
-        $this->mailer->send($email);
-    }
 }
