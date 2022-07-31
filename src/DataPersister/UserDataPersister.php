@@ -8,6 +8,8 @@ use App\Service\TokenGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\MailerInterface;
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -15,18 +17,21 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private UserPasswordHasherInterface $_passwordHaser;
     private  Security $security;
     private TokenGeneratorService $tokenGeneratorService;
+    private MailerInterface $mailer;
 
     public function __construct(
         Security $security,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
-        TokenGeneratorService $tokenGeneratorService
+        TokenGeneratorService $tokenGeneratorService,
+        MailerInterface $mailer,
     )
     {
         $this->security =$security;
         $this->_em = $em;
         $this->_passwordHaser =$passwordHasher;
         $this->tokenGeneratorService = $tokenGeneratorService;
+        $this->mailer = $mailer;
     }
 
     public function supports($data, array $context = []): bool
@@ -60,8 +65,11 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $user->setBlocked(false);
         $user->setConfirmed(false);
         $user->setConfirmationToken($this->tokenGeneratorService->getRandomSecureToken());
+
         $this->setDefaultUserCompany($user);
         $this->hashUserPassword($user);
+
+        $this->sendEmail();
     }
 
     private function setDefaultUserCompany(User $user)
@@ -76,12 +84,23 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private function hashUserPassword(User $user)
     {
         // hash du mot de passe de l'utilisateur
-        // un mot de passe par defaut car c'est l'administrateur qui envo
+        // un mot de passe par defaut pour le moment
         $user->setPassword(
             $this->_passwordHaser->hashPassword(
                 $user,
                 "e34g#52kNRtL"
             )
         );
+    }
+
+    private function sendEmail()
+    {
+        $email = (new Email())
+            ->from('noreply-ypsi-cloud-rh@bob.com')
+            ->to('alexisbotdev@gmail.com')
+            ->subject('Time for Symfony Mailer!')
+            ->html('<p>See Twig integration for better HTML integration!</p>','text\html');
+
+        $this->mailer->send($email);
     }
 }
