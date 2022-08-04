@@ -45,7 +45,7 @@ class UserConfirmationDataPersister implements ContextAwareDataPersisterInterfac
 
             // si le token n'existe pas
             if (!$user) {
-                throw new NotFoundHttpException("Not found.");
+                throw new NotFoundHttpException("Token not found.");
             }
 
             // si le token existe
@@ -56,7 +56,7 @@ class UserConfirmationDataPersister implements ContextAwareDataPersisterInterfac
             // enregistrement en base
             $this->entityManager->flush();
 
-            // reponse utilisateur
+            // réponse à utilisateur
             return new JsonResponse(null, Response::HTTP_ACCEPTED);
         }
     }

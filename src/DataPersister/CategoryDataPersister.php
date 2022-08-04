@@ -34,12 +34,21 @@ final class CategoryDataPersister implements ContextAwareDataPersisterInterface
             $this->em->persist($data);
         }
 
-
         $this->em->flush();
     }
 
+    /**
+     * @param $data Category
+     * @param array $context
+     */
     public function remove($data, array $context = [])
     {
+        // si la catégorie n'est pas vide
+        if($data->getJobAds() && $data->getJobs()){
+            throw  new ConflictHttpException("This Category is used in some Job and JobAds.You should remove them first.");
+        }
+
+        // si où la catégorie est vide
        $this->em->remove($data);
        $this->em->flush();
     }
@@ -50,13 +59,13 @@ final class CategoryDataPersister implements ContextAwareDataPersisterInterface
          */
         $user = $this->security->getUser();
 
-        if($user->getCompany())
+        // il faut obligatoirement avoir une entreprise
+        if(!$user->getCompany())
         {
-            $companyId = $user->getCompany()->getId();
-            $category->setCompanyId($companyId);
-        }else {
-            throw new ConflictHttpException("This account has no company. Please create a first.");
+            throw new ConflictHttpException("This account has no company. Please create one first.");
         }
 
+        $companyId = $user->getCompany()->getId();
+        $category->setCompanyId($companyId);
     }
 }

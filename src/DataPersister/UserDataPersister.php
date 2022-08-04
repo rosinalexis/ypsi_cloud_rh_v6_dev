@@ -7,10 +7,9 @@ use App\Entity\User;
 use App\Service\MailerService;
 use App\Service\TokenGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mailer\MailerInterface;
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -40,17 +39,19 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         return $data instanceof User;
     }
 
+    /**
+     * @throws InternalErrorException
+     */
     public function persist($data, array $context = [])
     {
-
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
+            //initialisation de l'utilisateur
             $this->initUserAccount($data);
 
             //enregistrement de la donnée
             $this->_em->persist($data);
         }
-
 
         $this->_em->flush();
     }
@@ -61,7 +62,11 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $this->_em->flush();
     }
 
-    private function initUserAccount(User $user)
+
+    /**
+     * @throws InternalErrorException
+     */
+    private function initUserAccount(User $user): void
     {
         $user->setBlocked(false);
         $user->setConfirmed(false);
@@ -69,7 +74,6 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
         $this->setDefaultUserCompany($user);
         $this->hashUserPassword($user);
-
         $this->mailer->sendAccountConfirmationEmail($user);
 
     }
