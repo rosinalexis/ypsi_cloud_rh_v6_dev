@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         "post" => [
-            "path" => "/users/confirmation"
+            'path' => '/users/confirmation',
         ]
     ],
     itemOperations: []
@@ -63,7 +63,4 @@ class UserConfirmation
     {
         $this->retypedPassword = $retypedPassword;
     }
-
-
-
 }

@@ -3,28 +3,19 @@
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\User;
 use App\Entity\UserConfirmation;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserConfirmationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 class UserConfirmationDataPersister implements ContextAwareDataPersisterInterface
 {
+    private  UserConfirmationService $userConfirmationService;
 
-    private  UserRepository $userRepository;
-    private EntityManagerInterface $entityManager;
-    private UserPasswordHasherInterface $passwordHasher;
-
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager,UserPasswordHasherInterface $passwordHasher)
+    public function __construct(UserConfirmationService $userConfirmationService)
     {
-        $this->userRepository = $userRepository;
-        $this->entityManager =$entityManager;
-        $this->passwordHasher =$passwordHasher;
+        $this->userConfirmationService =$userConfirmationService;
     }
 
     public function supports($data, array $context = []): bool
@@ -41,20 +32,8 @@ class UserConfirmationDataPersister implements ContextAwareDataPersisterInterfac
     {
         if ($data instanceof UserConfirmation && (($context['collection_operation_name'] ?? null) === 'post')) {
 
-            $user = $this->userRepository->findOneBy(['confirmationToken' => $data->getConfirmationToken()]);
-
-            // si le token n'existe pas
-            if (!$user) {
-                throw new NotFoundHttpException("Token not found.");
-            }
-
-            // si le token existe
-            $user->setConfirmed(true);
-            $user->setConfirmationToken(null);
-            $user->setPassword($this->passwordHasher->hashPassword($user, $data->getPassword()));
-
-            // enregistrement en base
-            $this->entityManager->flush();
+            // traitement via un service
+            $this->userConfirmationService->confirmUser($data->getConfirmationToken(),$data->getPassword());
 
             // réponse à utilisateur
             return new JsonResponse(null, Response::HTTP_ACCEPTED);
