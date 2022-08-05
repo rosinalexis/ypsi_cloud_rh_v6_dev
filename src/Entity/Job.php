@@ -22,12 +22,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getJob().getId()"
         ],
         'put',
-        'patch',
         'delete',
     ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
-    ]
+    ],
+    denormalizationContext: ['groups' => ['write:job']]
 )]
 class Job
 {
@@ -36,29 +36,31 @@ class Job
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('user:read')]
+    #[Groups(['user:read','write:job'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
-    #[Groups('user:read')]
+    #[Groups(['user:read','write:job'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(max: 255)]
-    #[Groups('user:read')]
+    #[Groups(['user:read','write:job'])]
     private ?string $description = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'jobs')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups(['write:job'])]
     private ?Category $category = null;
 
     #[ORM\OneToOne(inversedBy: 'job', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups(['write:job'])]
     private ?User $user = null;
 
     public function getId(): ?int

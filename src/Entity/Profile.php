@@ -28,9 +28,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
             'denormalization_context' => ['groups' => ['profile:put:write']]
         ],
-        'patch' => [
-            'security' => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
-        ],
         'delete'
     ],
     attributes: [

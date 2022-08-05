@@ -17,9 +17,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'categories')]
 #[ApiResource(
+    itemOperations: [
+        'get',
+        'put',
+        'delete'
+    ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
-    ]
+    ],
+    denormalizationContext: ['groups' => ['write:category']]
 )]
 class Category
 {
@@ -33,12 +39,12 @@ class Category
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5, max: 255)]
-    #[Groups('category:post:write')]
+    #[Groups('write:category')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT,nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Groups('category:post:write')]
+    #[Groups('write:category')]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Job::class)]

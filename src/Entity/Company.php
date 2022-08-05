@@ -9,6 +9,7 @@ use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
@@ -16,9 +17,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'companies')]
 #[ApiResource(
     collectionOperations:[],
+    itemOperations:[
+        'get',
+        'put',
+        'delete'
+    ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
-    ]
+    ],
+    denormalizationContext: ['groups' => ['write:company']]
 )]
 class Company
 {
@@ -32,44 +39,53 @@ class Company
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 10,max: 255)]
+    #[Groups('write:company')]
     private ?string $siret = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:company')]
     private ?string $name = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Assert\Length(min:5,max: 180)]
+    #[Groups('write:company')]
     private ?string $email = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 10,max: 30)]
+    #[Groups('write:company')]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:company')]
     private ?string $departmentName = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Groups('write:company')]
     private ?int $departmentNumber = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:company')]
     private ?string $region = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:company')]
     private ?string $address = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups('write:company')]
     private array $settings = [];
 
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: User::class)]

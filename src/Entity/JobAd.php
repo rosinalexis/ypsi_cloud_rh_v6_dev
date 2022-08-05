@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: JobAdRepository::class)]
@@ -26,12 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security' => "is_granted('PUBLIC_ACCESS')"
         ],
         'put',
-        'patch',
         'delete'
     ],
     attributes: [
         'security' => "is_granted('ROLE_ADMIN')"
-    ]
+    ],
+    denormalizationContext: ['groups' => ['write:jobAd']]
 )]
 class JobAd
 {
@@ -43,44 +44,53 @@ class JobAd
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('write:jobAd')]
     private ?string $reference = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:jobAd')]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
+    #[Groups('write:jobAd')]
     private ?string $region = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3,max: 255)]
+    #[Groups('write:jobAd')]
     private ?string $contractType = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups('write:jobAd')]
     private array $requirements = [];
 
     #[ORM\Column(nullable: true)]
+    #[Groups('write:jobAd')]
     private array $tasks = [];
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotBlank]
+    #[Groups('write:jobAd')]
     private ?string $wage = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Groups('write:jobAd')]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\Type('bool')]
+    #[Groups('write:jobAd')]
     private ?bool $published = null;
 
     #[ORM\ManyToOne(inversedBy: 'jobAds')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups('write:jobAd')]
     private ?Category $category = null;
 
     #[ORM\OneToMany(mappedBy: 'jobAd', targetEntity: Contact::class, orphanRemoval: true)]
@@ -279,7 +289,8 @@ class JobAd
     }
 
     #[ORM\PostUpdate]
-    public function updatePublishedDate(){
+    public function updatePublishedDate(): void
+    {
         if($this->isPublished()){
             $this->setPublishedAt(new \DateTimeImmutable());
         }
