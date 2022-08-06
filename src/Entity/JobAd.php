@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Entity\Traits\Timestamplable;
 use App\Repository\JobAdRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,10 +33,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         'delete'
     ],
     attributes: [
-        'security' => "is_granted('ROLE_ADMIN')"
+        'security' => "is_granted('ROLE_ADMIN')",
+        'order' =>[
+            'published'=> 'DESC'
+        ]
     ],
-    denormalizationContext: ['groups' => ['write:jobAd']]
+    denormalizationContext: ['groups' => ['write:jobAd']],
 )]
+#[ApiFilter(SearchFilter::class,properties: ['title'=>'partial'])]
 class JobAd
 {
     use Timestamplable;
@@ -44,47 +51,47 @@ class JobAd
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('write:jobAd')]
+    #[Groups(['read:jobAd','write:jobAd'])]
     private ?string $reference = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5,max: 255)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?string $region = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3,max: 255)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?string $contractType = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private array $requirements = [];
 
     #[ORM\Column(nullable: true)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private array $tasks = [];
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?string $wage = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\Type('bool')]
-    #[Groups('write:jobAd')]
+    #[Groups(['write:jobAd'])]
     private ?bool $published = null;
 
     #[ORM\ManyToOne(inversedBy: 'jobAds')]
@@ -94,11 +101,13 @@ class JobAd
     private ?Category $category = null;
 
     #[ORM\OneToMany(mappedBy: 'jobAd', targetEntity: Contact::class, orphanRemoval: true)]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private Collection $contacts;
 
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Type('int')]
+    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?int $companyId = null;
 
     #[ORM\Column(nullable: true)]

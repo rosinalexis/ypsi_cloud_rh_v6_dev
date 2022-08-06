@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
+use App\Exception\InvalidConfirmationTokenException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserConfirmationService
@@ -23,13 +23,15 @@ class UserConfirmationService
         $this->userRepository = $userRepository;
         $this->passwordHasher =$passwordHasher;
     }
-    public function confirmUser(string $confirmationToken,$plainPassword): void
+
+
+    public function confirmUser(string $confirmationToken, $plainPassword): void
     {
         $user = $this->userRepository->findOneBy(['confirmationToken' => $confirmationToken]);
 
         // si le token n'existe pas
         if (!$user) {
-            throw new NotFoundHttpException("Token not found.");
+            throw new InvalidConfirmationTokenException();
         }
 
         // si le token existe
@@ -47,7 +49,7 @@ class UserConfirmationService
 
         // si le token n'existe pas
         if (!$user) {
-            throw new NotFoundHttpException("Token not found.");
+            throw new InvalidConfirmationTokenException();
         }
 
         return true;
