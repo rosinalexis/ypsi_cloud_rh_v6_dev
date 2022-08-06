@@ -49,7 +49,13 @@ class HomeController extends AbstractController
     }
 
     #[Route('/app/config', name: 'app_config', methods: ['POST'])]
-    public function addFirstAdminAndCompany(Request $request, SerializerInterface $serializer,EntityManagerInterface $em, ValidatorInterface $validator,UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function addFirstAdminAndCompany(
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $em,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse
     {
         //TODO:  Faire un service pour la gestion d'un nouveau compte
         $userInfo = json_encode($request->toArray()['user']);

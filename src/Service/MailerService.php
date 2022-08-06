@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -14,11 +15,13 @@ use Twig\TemplateWrapper;
 class MailerService
 {
     private MailerInterface $mailer;
+    private LoggerInterface $logger;
     private const EMAIL_SENDER = 'noreply-cloud-rh-@ypsi.com';
 
-    public function __construct(MailerInterface $mailer)
+    public function __construct(MailerInterface $mailer, LoggerInterface $logger)
     {
         $this->mailer = $mailer;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,6 +42,9 @@ class MailerService
         try {
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
+
+            $this->logger->error("The server can't send email.Please check your admin.");
+
             throw new InternalErrorException("The server can't send email.Please check your admin.");
         }
     }
@@ -67,6 +73,9 @@ class MailerService
         try {
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
+
+            $this->logger->error("The server can't send the template email.Please check your admin.");
+
             throw new InternalErrorException("The server can't send the template email.Please check your admin.");
         }
     }

@@ -2,10 +2,17 @@
 
 namespace App\Service;
 
-use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Psr\Log\LoggerInterface;
 
 class TokenGeneratorService
 {
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     private const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -22,7 +29,8 @@ class TokenGeneratorService
             }
 
         } catch (\Exception $e) {
-            // TODO : ADD manage exception
+
+            $this->logger->error("The serveur can not generate confirmation token. \n ".$e->getMessage());
         }
 
         return $token;
