@@ -50,6 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_USER = ["ROLE_USER"];
     const ROLE_ADMIN = ["ROLE_ADMIN"];
+    const ROLE_SUPER_ADMIN = ["ROLE_SUPER_ADMIN"];
 
     use Timestamplable;
 
@@ -329,4 +330,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->confirmationToken = $confirmationToken;
     }
 
+    public function __toString()
+    {
+        $user =$this->getEmail();
+
+        if($this->getProfile())
+        {
+            $user = $this->getProfile()->getFullName();
+        }
+        return $user;
+    }
 }

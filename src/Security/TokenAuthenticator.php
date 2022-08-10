@@ -27,5 +27,4 @@ class TokenAuthenticator extends JWTAuthenticator
         return $passport;
     }
 
-
 }

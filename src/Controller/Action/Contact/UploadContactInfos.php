@@ -30,7 +30,7 @@ class UploadContactInfos  extends AbstractController
         $this->jobAdRepository =$jobAdRepository;
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Contact
     {
         $lastname = $request->request->get('lastname');
         $firstname = $request->request->get('firstname');
@@ -60,7 +60,7 @@ class UploadContactInfos  extends AbstractController
         $contact->setCompanyId($job->getCompanyId());
         $this->addManagementToContact($contact);
 
-        // Validation l'entite
+        // Validation l'entité
         $this->validator->validate($contact,['groups' => ['post:contact']]);
 
         // Enregistrement en base des informations

@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "easycorp/easyadmin-bundle": "^4.3",
         "league/flysystem-aws-s3-v3": "^3.2",
         "league/flysystem-bundle": "^2.3",
         "lexik/jwt-authentication-bundle": "^2.16",

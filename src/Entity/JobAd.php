@@ -56,13 +56,13 @@ class JobAd
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 5,max: 255)]
+    #[Assert\Length(min: 3,max: 255)]
     #[Groups(['write:jobAd'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 5,max: 255)]
+    #[Assert\Length(min: 3,max: 255)]
     #[Groups(['write:jobAd'])]
     private ?string $region = null;
 
@@ -297,11 +297,12 @@ class JobAd
         return $this;
     }
 
-    #[ORM\PostUpdate]
+    #[ORM\PreFlush]
     public function updatePublishedDate(): void
     {
         if($this->isPublished()){
             $this->setPublishedAt(new \DateTimeImmutable());
         }
     }
+
 }

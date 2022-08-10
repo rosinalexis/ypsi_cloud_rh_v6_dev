@@ -5,19 +5,23 @@ namespace App\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\JobAd;
 use App\Entity\User;
+use App\Service\ReferenceGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Uid\Ulid;
 
 class JobAdDataPersister implements ContextAwareDataPersisterInterface
 {
     private EntityManagerInterface $em;
     private Security $security;
+    private ReferenceGeneratorService $referenceGeneratorService;
 
-    public function __construct(Security $security,EntityManagerInterface $em)
+    public function __construct(Security $security,EntityManagerInterface $em,ReferenceGeneratorService $referenceGeneratorService)
     {
         $this->em = $em;
         $this->security =$security;
+        $this->referenceGeneratorService = $referenceGeneratorService;
     }
 
     public function supports($data, array $context = []): bool
@@ -33,12 +37,6 @@ class JobAdDataPersister implements ContextAwareDataPersisterInterface
             $this->em->persist($data);
         }
 
-        if ($data instanceof JobAd && (($context['collection_operation_name'] ?? null) === 'put'))
-        {
-            $this->updatePublishedDate($data);
-        }
-
-
         $this->em->flush();
     }
 
@@ -50,18 +48,10 @@ class JobAdDataPersister implements ContextAwareDataPersisterInterface
 
     private function initNewJobAd(JobAd $jobAd)
     {
-        $this->generateUuid($jobAd);
+        $jobAd->setReference($this->referenceGeneratorService->getRandomSecureReference());
 
         $jobAd->setCompanyId($this->getCompanyId());
 
-        $this->updatePublishedDate($jobAd);
-    }
-
-    private function updatePublishedDate(JobAd $jobAd)
-    {
-        if($jobAd->isPublished()){
-            $jobAd->setPublishedAt(new \DateTimeImmutable());
-        }
     }
 
     private function getCompanyId(): ?int
@@ -70,14 +60,13 @@ class JobAdDataPersister implements ContextAwareDataPersisterInterface
          * @var $currentUser User
          */
         $currentUser = $this->security->getUser();
+
+        if(!$currentUser)
+        {
+            throw new UnauthorizedHttpException("Pls do Authentication Or go away.");
+        }
+
         return $currentUser->getCompany()->getId();
-    }
-
-    private function generateUuid(JobAd $jobAd)
-    {
-        $uuid = new Ulid();
-
-        $jobAd->setReference("ref-".date("Y")."-".$uuid->toRfc4122());
     }
 
 }

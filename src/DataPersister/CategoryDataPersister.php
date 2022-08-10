@@ -45,7 +45,7 @@ final class CategoryDataPersister implements ContextAwareDataPersisterInterface
     {
         // si la catégorie n'est pas vide
         if($data->getJobAds() && $data->getJobs()){
-            throw  new ConflictHttpException("This Category is used in some Job and JobAds.You should remove them first.");
+            throw  new ConflictHttpException("This Category is used by some Job or JobAds.You should remove them first.");
         }
 
         // si où la catégorie est vide

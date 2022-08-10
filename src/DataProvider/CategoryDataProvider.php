@@ -5,7 +5,6 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Entity\Category;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
@@ -55,16 +54,12 @@ class CategoryDataProvider implements ContextAwareCollectionDataProviderInterfac
             throw  new NotFoundHttpException("Category is not found.");
         }
 
-        if(($user->getCompany()->getId() === $searchCategory->getCompanyId())){
-            return $searchCategory;
-        }
-
         if($user->getCompany()->getId() !== $searchCategory->getCompanyId()){
 
             throw new HttpException(Response::HTTP_FORBIDDEN,"This category is not in your company.");
         }
 
-        return null;
+        return $searchCategory;
     }
 
 
