@@ -28,14 +28,15 @@ class EmptyBodySubscriber implements EventSubscriberInterface
 
         if(
             !in_array($method,[Request::METHOD_POST,Request::METHOD_PUT]) ||
-            in_array($request->getContent(),['html','form']) ||
+            in_array($request->getContentType(),['html','form']) ||
             !str_starts_with($route, 'api'))
         {
             return;
         }
 
+        //dd($request->getContentType());
+        // vérification si l'objet json est vide ou null
         $data = $event->getRequest()->get('data');
-
         $objectBaseClass = $data::class;
         $newInstanceOfBaseClasse = new $objectBaseClass();
 

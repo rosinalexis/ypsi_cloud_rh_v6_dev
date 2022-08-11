@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 
 #[AsController]
 class UploadContactInfos  extends AbstractController
@@ -32,6 +32,7 @@ class UploadContactInfos  extends AbstractController
 
     public function __invoke(Request $request): Contact
     {
+
         $lastname = $request->request->get('lastname');
         $firstname = $request->request->get('firstname');
         $email = $request->request->get('email');

@@ -54,7 +54,6 @@ class Category
     private Collection $jobAds;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
     #[Assert\Type('int')]
     private ?int $companyId = null;
 
