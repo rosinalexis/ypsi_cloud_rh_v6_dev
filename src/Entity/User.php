@@ -70,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
-    #[Assert\Choice(choices: [self::ROLE_ADMIN,self::ROLE_USER],groups: ['user:post:write'])]
+    #[Assert\Choice(choices: [self::ROLE_SUPER_ADMIN,self::ROLE_ADMIN,self::ROLE_USER],groups: ['user:post:write'])]
     #[Groups(['user:read','user:post:write','user:put:write'])]
     private array $roles = [];
 

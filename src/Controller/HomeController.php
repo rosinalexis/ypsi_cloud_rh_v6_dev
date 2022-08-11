@@ -76,7 +76,7 @@ class HomeController extends AbstractController
         $company = $serializer->deserialize($companyInfo,Company::class,'json');
 
 
-        $errors = $validator->validate($user);
+        $errors = $validator->validate($user,null,['user:post:write']);
 
         if ($errors->count() > 0) {
             return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
