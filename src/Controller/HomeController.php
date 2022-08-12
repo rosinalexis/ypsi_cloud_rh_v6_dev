@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use ApiPlatform\Core\Validator\ValidatorInterface;
 use App\Entity\Company;
 use App\Entity\User;
 use App\Service\UserConfirmationService;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 #[AsController]
 class HomeController extends AbstractController
@@ -58,6 +59,7 @@ class HomeController extends AbstractController
     ): JsonResponse
     {
         //TODO:  Faire un service pour la gestion d'un nouveau compte
+
         $userInfo = json_encode($request->toArray()['user']);
         $companyInfo = json_encode($request->toArray()['company']);
 
@@ -75,18 +77,10 @@ class HomeController extends AbstractController
          */
         $company = $serializer->deserialize($companyInfo,Company::class,'json');
 
+        $validator->validate($user,['group'=>'user:post:write']);
 
-        $errors = $validator->validate($user,null,['user:post:write']);
+        $validator->validate($company);
 
-        if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
-        }
-
-        $errors = $validator->validate($company);
-
-        if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
-        }
 
         $user->setPassword($passwordHasher->hashPassword($user,$user->getPassword()));
 
@@ -97,9 +91,8 @@ class HomeController extends AbstractController
         $user->setCompany($company);
         $em->flush();
 
-        $jsonUser = $serializer->serialize($user,'json',['groups' => 'user:read']);
+        //$jsonUser = $serializer->serialize($user,'json',['groups' => 'user:read']);
 
-        //envoyer l'email de confirmation
-        return new JsonResponse($jsonUser, Response::HTTP_CREATED,[],true);
+        return new JsonResponse([], Response::HTTP_CREATED);
     }
 }

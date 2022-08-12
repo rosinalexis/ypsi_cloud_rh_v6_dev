@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CodeEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class JsonCodeEditorType extends AbstractType
 {
@@ -24,5 +23,4 @@ class JsonCodeEditorType extends AbstractType
     {
         return CodeEditorType::class;
     }
-
 }

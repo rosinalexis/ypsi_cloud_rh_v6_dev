@@ -9,12 +9,15 @@ use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'companies')]
+#[UniqueEntity('email',message: 'This Company email is already used.')]
+#[UniqueEntity('name',message: 'This Company name is already used.')]
 #[ApiResource(
     collectionOperations:[],
     itemOperations:[
@@ -34,18 +37,19 @@ class Company
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column()]
+    #[Groups(['write:company','user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 10,max: 255)]
-    #[Groups('write:company')]
+    #[Groups(['write:company','user:read'])]
     private ?string $siret = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 5,max: 255)]
-    #[Groups('write:company')]
+    #[Groups(['write:company','user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 180)]

@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('email')]
+#[UniqueEntity('email',message: 'This user email is already used.')]
 #[ApiResource(
     collectionOperations: [
         'get',
@@ -65,7 +65,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(groups: ['user:post:write'])]
     #[Assert\Length(min: 6, max: 180 ,groups: ['user:post:write'])]
     #[Groups(['user:read','user:post:write'])]
-    #[ApiProperty(security: "is_granted('ROLE_ADMIN')")]
     private ?string $email = null;
 
     #[ORM\Column]
