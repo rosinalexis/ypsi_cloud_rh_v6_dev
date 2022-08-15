@@ -27,6 +27,18 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
+        $response = new Response();
+        $response->headers->clearCookie('BEARER', '/', null, true, true, 'none');
+
         //throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/api/logout', name: 'app_api_logout', methods: ["GET"])]
+    public function apiLogout(): Response
+    {
+        $response = new Response();
+        $response->headers->clearCookie('BEARER', '/', null, true, true, 'none');
+
+        return $response;
     }
 }

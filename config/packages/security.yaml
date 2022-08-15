@@ -22,6 +22,8 @@ security:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            logout:
+                path: app_api_logout
 
         api:
             pattern: ^/api

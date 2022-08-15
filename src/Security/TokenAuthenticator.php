@@ -6,6 +6,8 @@ use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class TokenAuthenticator extends JWTAuthenticator
 {
@@ -26,5 +28,4 @@ class TokenAuthenticator extends JWTAuthenticator
 
         return $passport;
     }
-
 }
